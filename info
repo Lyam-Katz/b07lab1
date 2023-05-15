@@ -1,1 +1,10 @@
-information about the late goes here
+In this lab I learned how to use the terminal to create files and push them to a github repo
+I created a polynomial class that stores a polynomial
+The only field of the class is a double array that stores the coefficients of the polynomial
+There are 2 constructors
+- One stores the polynomial 0 and doesn't take any arguments
+- One stores any polynomial. It takes an array of polynomial coefficients as an argument
+The class has methods add, evaluate, and hasRoot
+add adds the stored polynomial with a polynomial passed as an argument and returns the new polynomial
+evaluate evaluates the stored polynomial at a passed double, x, and returns the evaluation as a double
+hasRoot returns whether or not the stored polynomial has a root at a passed double, x
