@@ -1,6 +1,6 @@
 public class Polynomial{
-	public double[] coefficients;
-	public int[] exponents;
+	private double[] coefficients;
+	private int[] exponents;
 
 	public Polynomial() {
     		coefficients = new double[0];
