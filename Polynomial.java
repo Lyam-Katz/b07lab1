@@ -1,3 +1,7 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
 public class Polynomial{
 	private double[] coefficients;
 	private int[] exponents;
@@ -12,6 +16,35 @@ public class Polynomial{
     		this.exponents = exponents;
 	}
 
+	public Polynomial(File file) {
+        Scanner scanner;
+        try {
+            scanner = new Scanner(file);
+            String[] terms = scanner.nextLine().split("(?=[+-])");
+            coefficients = new double[terms.length];
+            exponents = new int[terms.length];
+
+            for (int i = 0; i < terms.length; i++) {
+                double multiplier = 1;
+                int shift = 0;
+                if (terms[i].charAt(0) == '-') {
+                    multiplier = -1;
+                }
+
+                int xIndex = terms[i].indexOf('x');
+                String coefficientString = terms[i].substring(1, xIndex);
+                coefficients[i] = Double.parseDouble(coefficientString) * multiplier;
+
+                if (terms[i].length() == xIndex + 1) {
+                    exponents[i] = 1;
+                } else {
+                    exponents[i] = Integer.parseInt(terms[i].substring(xIndex + 2));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+	}
 	public Polynomial add(Polynomial poly2) {
     		int totalTerms = this.coefficients.length + poly2.coefficients.length;
     		double[] answerCoefficients = new double[totalTerms];
