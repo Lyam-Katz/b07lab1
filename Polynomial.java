@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
+import java.io.PrintWriter;
 
 public class Polynomial{
 	private double[] coefficients;
@@ -23,29 +24,47 @@ public class Polynomial{
             String[] terms = scanner.nextLine().split("(?=[+-])");
             coefficients = new double[terms.length];
             exponents = new int[terms.length];
-
+    	    if(terms[0].charAt(0) != '-')
+		terms[0] = "+" + terms[0];	
             for (int i = 0; i < terms.length; i++) {
                 double multiplier = 1;
-                int shift = 0;
                 if (terms[i].charAt(0) == '-') {
                     multiplier = -1;
                 }
 
                 int xIndex = terms[i].indexOf('x');
-                String coefficientString = terms[i].substring(1, xIndex);
-                coefficients[i] = Double.parseDouble(coefficientString) * multiplier;
+
+		if(xIndex == -1){
+		coefficients[i] = Double.parseDouble(terms[i].substring(1)) * multiplier;
+		exponents[i] = 0;
+		}
+		else if(xIndex == 1){
+		coefficients[i] = multiplier;
+		if(terms[i].length() == 2)
+			exponents[i] = 1;
+		else
+		exponents[i] = Integer.parseInt("" + terms[i].charAt(2));
+		}
+		else{
+                coefficients[i] = Double.parseDouble(terms[i].substring(1, xIndex)) * multiplier;
 
                 if (terms[i].length() == xIndex + 1) {
                     exponents[i] = 1;
                 } else {
-                    exponents[i] = Integer.parseInt(terms[i].substring(xIndex + 2));
+                    exponents[i] = Integer.parseInt("" + terms[i].charAt(xIndex + 1));
                 }
+		}
             }
         } catch (Exception e) {
-            e.printStackTrace();
+		coefficients = new double[0];
+		exponents = new int[0];
         }
 	}
 	public Polynomial add(Polynomial poly2) {
+		if(this.coefficients == null)
+			return poly2;
+		if(poly2.coefficients == null)
+			return new Polynomial(this.coefficients, this.exponents);
     		int totalTerms = this.coefficients.length + poly2.coefficients.length;
     		double[] answerCoefficients = new double[totalTerms];
     		int[] answerExponents = new int[totalTerms];
@@ -88,22 +107,30 @@ public class Polynomial{
         		k++;
     		}
 
-   		while (k > 0 && answerCoefficients[k - 1] == 0) {
-       			k--;
-    		}
+		k = answerCoefficients.length;
+		for(int r = 0; r < answerCoefficients.length; r++){
+			if(Math.abs(answerCoefficients[r]) < 0.00000000001)
+				k--;
+		}
 
    		double[] newCoefficients = new double[k];
     		int[] newExponents = new int[k];
-    		for (int m = 0; m < k; m++) {
-        		newCoefficients[m] = answerCoefficients[m];
-        		newExponents[m] = answerExponents[m];
+		int currIndex = 0;
+    		for (int m = 0; m < answerCoefficients.length; m++) {
+			if(Math.abs(answerCoefficients[m]) > 0.00000000001){
+        		newCoefficients[currIndex] = answerCoefficients[m];
+        		newExponents[currIndex] = answerExponents[m];
+			currIndex++;
+			}
     		}
 
     		return new Polynomial(newCoefficients, newExponents);
 	}
 
 	public double evaluate(double x) {
-    		double answer = 0;
+		if(coefficients == null)
+			return 0;
+		double answer = 0;
     		for (int i = 0; i < coefficients.length; i++) {
         		answer += coefficients[i] * Math.pow(x, exponents[i]);
     		}
@@ -115,6 +142,8 @@ public class Polynomial{
 	}
 
 	public Polynomial multiply(Polynomial poly2) {
+		if(this.coefficients == null || poly2.coefficients == null)
+			return new Polynomial();
     		int totalTerms = this.coefficients.length * poly2.coefficients.length;
     		double[] answerCoefficients = new double[totalTerms];
     		int[] answerExponents = new int[totalTerms];
@@ -177,5 +206,33 @@ public class Polynomial{
     		}
 
     		return new Polynomial(newCoefficients, newExponents);
+	}
+
+	public void saveToFile(String fileName) {
+		try {
+			PrintWriter writer = new PrintWriter(fileName);
+			writer.print(convertToString());
+			writer.close();
+		    }
+		catch (Exception e) {
+			}
+	}
+
+	public String convertToString() {
+		if(coefficients == null)
+			return "";
+		String answer = "";
+		for(int i = 0; i < coefficients.length; i++){
+
+		if(coefficients[i] > 0 && i > 0)
+			answer += "+";
+		answer += coefficients[i];
+		if(exponents[i] != 0)
+			answer += "x";
+		else
+			continue;
+		answer += exponents[i];
+		}
+		return answer;
 	}
 }
