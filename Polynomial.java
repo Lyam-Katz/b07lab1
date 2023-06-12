@@ -4,8 +4,8 @@ import java.util.Scanner;
 import java.io.PrintWriter;
 
 public class Polynomial{
-	private double[] coefficients;
-	private int[] exponents;
+	public double[] coefficients;
+	public int[] exponents;
 
 	public Polynomial() {
     		coefficients = new double[0];
